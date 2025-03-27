@@ -1,4 +1,6 @@
 // --- Elementos del DOM ---
+const difficulty = document.getElementById('difficulty');
+const guessesList = document.getElementById('guessesList');
 const guessInput = document.getElementById('guessInput');
 const guessButton = document.getElementById('guessButton');
 const message = document.getElementById('message');
@@ -23,6 +25,7 @@ function startGame() {
     message.textContent = '';
     message.className = 'message'; // Quita clases de color
     attemptsInfo.textContent = '';
+    guessesList.innerHTML = '';  // Vacía la lista de intentos anteriores
     guessInput.value = ''; // Limpia el input
     guessInput.disabled = false; // Habilita el input
     guessButton.disabled = false; // Habilita el botón de adivinar
@@ -54,12 +57,19 @@ function handleGuess() {
 
     // Incrementar el contador de intentos
     attempts++;
-    attemptsInfo.textContent = `Intentos: ${attempts}`;
+    attemptsInfo.textContent = `Intentos: ${attempts} / 10`;
+
+    const listItem = document.createElement('li'); // Crea un elemento <li>
+    listItem.textContent = userGuess; // Pone el número dentro del <li>
+    guessesList.appendChild(listItem); // Añade el <li> a la lista <ul>
 
     // Comparar el intento con el número secreto
     if (userGuess === secretNumber) {
         setMessage(`¡Correcto! 🎉 El número era ${secretNumber}. Lo adivinaste en ${attempts} intentos.`, 'correct');
         endGame();
+    } else if (attempts == 10) {
+        endGame();
+        setMessage(`¡HAS PERDIDO! El número secreto era ${secretNumber}`, 'wrong');
     } else if (userGuess < secretNumber) {
         setMessage('¡Demasiado bajo! Intenta un número más alto. 👇', 'wrong');
     } else {
