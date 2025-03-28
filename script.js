@@ -1,19 +1,33 @@
 // --- Elementos del DOM ---
-const difficulty = document.getElementById('difficulty');
+const initialText = document.getElementById('initialText');
 const guessesList = document.getElementById('guessesList');
 const guessInput = document.getElementById('guessInput');
 const guessButton = document.getElementById('guessButton');
 const message = document.getElementById('message');
 const attemptsInfo = document.getElementById('attempts');
 const playAgainButton = document.getElementById('playAgainButton');
+const recordSpan = document.getElementById('record');
 
 // --- Variables del Juego ---
 let secretNumber;
 let attempts;
-const MAX_NUMBER = 100;
+let MAX_NUMBER = 50;
 const MIN_NUMBER = 1;
+const MAX_ATTEMPTS = 10;
+let record = localStorage.getItem('record') || MAX_ATTEMPTS + 1;
+
+if (record !== MAX_ATTEMPTS + 1) {
+    recordSpan.innerText = record;
+}
 
 // --- Funciones ---
+
+// Función para comprobar el valor de la dificultad
+function cambiarDificultad() {
+    MAX_NUMBER = parseInt(document.getElementById('dificultad').value);
+    document.getElementById('maxNum').textContent = MAX_NUMBER;
+    startGame();
+}
 
 // Función para iniciar o reiniciar el juego
 function startGame() {
@@ -31,6 +45,8 @@ function startGame() {
     guessButton.disabled = false; // Habilita el botón de adivinar
     playAgainButton.style.display = 'none'; // Oculta el botón de jugar de nuevo
     guessInput.focus(); // Pone el foco en el input
+
+    rotoRecord.innerText = '';
 
     console.log(`Pssst... el número secreto es ${secretNumber}`); // Ayuda para depurar
 }
@@ -57,7 +73,7 @@ function handleGuess() {
 
     // Incrementar el contador de intentos
     attempts++;
-    attemptsInfo.textContent = `Intentos: ${attempts} / 10`;
+    attemptsInfo.textContent = `Intentos: ${attempts} / ${MAX_ATTEMPTS}`;
 
     const listItem = document.createElement('li'); // Crea un elemento <li>
     listItem.textContent = userGuess; // Pone el número dentro del <li>
@@ -66,14 +82,20 @@ function handleGuess() {
     // Comparar el intento con el número secreto
     if (userGuess === secretNumber) {
         setMessage(`¡Correcto! 🎉 El número era ${secretNumber}. Lo adivinaste en ${attempts} intentos.`, 'correct');
+        if (attempts < record) {
+            localStorage.setItem('record', attempts);
+            const rotoRecord = document.getElementById('rotoRecord');
+            rotoRecord.innerText = `HAS BATIDO EL RECORD CON ${attempts} intentos!!`;
+            recordSpan.innerHTML = attempts;
+        }
         endGame();
-    } else if (attempts == 10) {
-        endGame();
+    } else if (attempts === MAX_ATTEMPTS) {
         setMessage(`¡HAS PERDIDO! El número secreto era ${secretNumber}`, 'wrong');
+        endGame();
     } else if (userGuess < secretNumber) {
-        setMessage('¡Demasiado bajo! Intenta un número más alto. 👇', 'wrong');
+        setMessage('¡Demasiado bajo! Intenta un número más alto. 👆', 'wrong');
     } else {
-        setMessage('¡Demasiado alto! Intenta un número más bajo. 👆', 'wrong');
+        setMessage('¡Demasiado alto! Intenta un número más bajo. 👇' , 'wrong');
     }
 
     // Limpiar el input para el siguiente intento (si no ha ganado)
@@ -113,5 +135,6 @@ guessInput.addEventListener('keyup', function(event) {
 // Escuchar clics en el botón "Jugar de Nuevo"
 playAgainButton.addEventListener('click', startGame);
 
-// --- Iniciar el juego al cargar la página ---
-startGame();
+// --- Iniciar el juego al cargar la página (con la dificultad) ---
+cambiarDificultad();
+/* startGame(); */

@@ -10,16 +10,19 @@
 
     <div class="container">
         <h1>¡Adivina el Número! 🤔<br>🎈🎈🎈🎈🎈</h1>
-        <p>He pensado en un número entre 1 y 100. ¿Puedes adivinar cuál es?</p>
 
         <div class="difficulty">
-            <label for="difficulty">Dificultad:</label>
-            <select id="difficulty" onchange="changeDifficulty()">
-                <option value="facil">Fácil (1-50)</option>
-                <option value="medio">Medio (1-100)</option>
-                <option value="dificil">Dificil (1-200)</option>
+            <label for="dificultad">Dificultad:</label>
+            <select id="dificultad" onchange="cambiarDificultad()">
+                <option value="100" selected>Normal (1-100)</option>
+                <option value="50" >Fácil (1-50)</option>
+                <option value="200">Dificil (1-200)</option>
             </select>
         </div>
+
+        <p>He pensado en un número entre 1 y <span id="maxNum">100</span> ¿Puedes adivinar cuál es?</p>
+        <p>(<b>Record actual:</b> <span id="record">_</span> intentos)</p>
+        <p id="rotoRecord"></p>
 
         <div class="input-area">
             <label for="guessInput">Tu intento:</label>
